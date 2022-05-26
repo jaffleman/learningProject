@@ -5,22 +5,19 @@
 import re
 # calculator
 
-
+def splinter(exp, m_split):
+    operation_tab = re.findall('[-,+,*,/]', exp)
+    if len(operation_tab) == 0:
+        m_split.append(int(exp))
+    else:
+        split_exp = exp.split(operation_tab[0], 1)
+        m_split.append(int(split_exp[0]))
+        m_split.append(operation_tab[0])
+        splinter(split_exp[1], m_split)
 
 def split_expression(express):
     master_split = []
-
-    def splinter(exp):
-        operation_tab = re.findall('[-,+,*,/]', exp)
-        if len(operation_tab) == 0:
-            master_split.append(int(exp))
-        else:
-            split_exp = exp.split(operation_tab[0], 1)
-            master_split.append(int(split_exp[0]))
-            master_split.append(operation_tab[0])
-            splinter(split_exp[1])
-
-    splinter(express)
+    splinter(express, master_split)
     return master_split
 
 
@@ -52,32 +49,22 @@ def calc(n1, n2, op):
 
 
 def calculate(tab_data):
-    sign_tab = [['/', '*'], ['+', '-']]
-    for sign in sign_tab:
+    for sign in [['/', '*'], ['+', '-']]:
         continuous = True
         while continuous:
             index = -1
-            if sign[0] in tab_data:
-                div_index = tab_data.index(sign[0])
-            else:
-                div_index = -1
-            if sign[1] in tab_data:
-                mult_index = tab_data.index(sign[1])
-            else:
-                mult_index = -1
-            if div_index == -1 and mult_index == -1:
-                continuous = False
+            if sign[0] in tab_data: div_index = tab_data.index(sign[0])
+            else: div_index = -1
+            if sign[1] in tab_data: mult_index = tab_data.index(sign[1])
+            else: mult_index = -1
+            if div_index == -1 and mult_index == -1: continuous = False
             else:
                 if div_index > -1 and mult_index > -1:
-                    if div_index < mult_index:
-                        index = div_index
-                    else:
-                        index = mult_index
+                    if div_index < mult_index: index = div_index
+                    else: index = mult_index
                 elif div_index > -1 or mult_index > -1:
-                    if div_index > -1:
-                        index = div_index
-                    else:
-                        index = mult_index
+                    if div_index > -1: index = div_index
+                    else: index = mult_index
                 nbr2 = tab_data.pop(index + 1)
                 operator = tab_data.pop(index)
                 nbr1 = tab_data.pop(index - 1)
